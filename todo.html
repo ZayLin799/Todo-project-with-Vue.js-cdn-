@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="add-todo">
+          <transition name="fade" mode="out-in">
+            <div class="add-input" key="addInput" v-if="!searchFeature">
+              <span @click="allCompletedTask">
+                <i
+                  class="fas fa-chevron-down"
+                  :class="{allCompleted:allCompletedTodo}"
+                ></i>
+              </span>
+              <input
+                type="text"
+                @keyup.enter="addTodo"
+                v-model="newTodo"
+                placeholder="What need to be done?"
+              />
+              <span @click="searchFeature = true">
+                <i class="fas fa-search search-icon"></i>
+              </span>
+            </div>
+            <div class="search-input" key="searchTask" v-else>
+              <input
+                type="text"
+                v-focus
+                placeholder="Search Task...."
+                v-model="search"
+              />
+            </div>
+          </transition>
+        </div>
+        <ul>
+          <transition-group name="slide">
+            <li v-for="(todo,index) in searchTodos" :key="todo.id">
+              <div class="todo-list">
+                <transition name="fade" mode="out-in">
+                  <div class="todo-item" key="showing" v-if="!todo.editing">
+                    <div class="todo-left-item">
+                      <input
+                        type="checkbox"
+                        v-model="todo.completed"
+                        @click="completedTodo(todo)"
+                      />
+                      <p
+                        @dblclick="editTodo(todo)"
+                        :class="{completed: todo.completed}"
+                      >
+                        {{todo.task}}
+                      </p>
+                    </div>
+                    <div class="remove-item" @click.stop="removeTodo(todo.id)">
+                      x
+                    </div>
+                  </div>
+                  <div class="edit-todo" key="editing" v-else>
+                    <input
+                      v-focus
+                      type="text"
+                      v-model="todo.task"
+                      @keyup.enter="doneEdit(todo)"
+                      @blur="doneEdit(todo)"
+                      @keyup.esc="cancelEdit(todo)"
+                    />
+                  </div>
+                </transition>
+              </div>
+            </li>
+          </transition-group>
+        </ul>
+        <div class="filter-task-container">
+          <div class="left-task">
+            <p>{{remainderTodo}} item left</p>
+          </div>
+          <div class="filter-task-button">
+            <button
+              @click="filter = 'all'"
+              :class="{currentTodos:filter==='all'}"
+            >
+              All
+            </button>
+            <button
+              @click="filter = 'active'"
+              :class="{currentTodos:filter==='active'}"
+            >
+              Active
+            </button>
+            <button
+              @click="filter = 'completed'"
+              :class="{currentTodos:filter==='completed'}"
+            >
+              Completed
+            </button>
+          </div>
+          <transition name="fade">
+            <div class="clear-completed-button" v-if="showClearCompleted">
+              <button @click="clearCompleted">Clear Completed</button>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
